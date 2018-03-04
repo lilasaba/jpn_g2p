@@ -32,9 +32,13 @@ class Transliterate:
         with open(lexicon) as inf, open(transliterated_lexicon,'wb') as outf:
             for line in inf:
                 line = line.strip()
-                romanji_line = self.transliterate_token(line)
-                if romanji_line:
-                    outf.write('%s\n' % romanji_line)
+                written,pron = line.split('\t')
+                romanji = self.transliterate_token(written)
+                ## Delete spaces from romanized token as it conflicts with
+                ## the g2p alignment.
+                romanji = romanji.replace(' ','')
+                if romanji:
+                    outf.write('%s\t%s\n' % (romanji,pron))
 
 if __name__ == '__main__':
     wikt = Transliterate()
