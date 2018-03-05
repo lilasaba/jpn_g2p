@@ -26,3 +26,6 @@ cat ${dict}/${dict}.test > ${dict}/${dict}.ref
 phonetisaurus-apply --model ${dict}/${dict}.o${ngram_order}.fst \
 	--word_list ${dict}/${dict}.words \
 	-n 2 -g -v > ${dict}/${dict}.hyp
+
+python calculateER.py --hyp ${dict}/${dict}.hyp \
+	--ref ${dict}/${dict}.ref
