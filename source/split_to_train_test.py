@@ -34,7 +34,7 @@ def split_into_train_and_test(fname,line_count,ratio=0.9):
     extension = fname.split('.')[-1]
     train_name = fname.replace(extension,'train')
     test_name = fname.replace(extension,'test')
-    a = np.random.binomial(2,ratio,line_count)
+    a = np.random.binomial(1,ratio,line_count)
     with open(fname) as inf,\
             open(train_name,'w',encoding='utf-8') as train,\
             open(test_name,'w',encoding='utf-8') as test:
@@ -47,5 +47,6 @@ def split_into_train_and_test(fname,line_count,ratio=0.9):
 if __name__ == '__main__':
     infile = sys.argv[1]
     line_count = count_lines(infile)
+    print('Line count in %s: %s' % (infile,line_count))
     split_into_train_and_test(infile,line_count)
 
