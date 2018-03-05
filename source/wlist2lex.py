@@ -11,9 +11,10 @@ class Word2Pron:
     Dependencies: espeak (https://github.com/espeak-ng/espeak-ng/blob/master/README.md).
     Convert string (word2ipa) or lexicon (in2out).
     How to run:
-    >>> python wlist2lex.py <path/to/wordlist.words>
+        >>> source activate python3.5
+        >>> python wlist2lex.py <path/to/wordlist>.ext
     Output:
-        <path/to/wordlist.train>
+        <path/to/wordlist>_espeak.ext
     '''
     def __init__(self):
         self.espeak_phoneme_set = set()
@@ -40,7 +41,9 @@ class Word2Pron:
         return pron
 
     def in2out(self,wlist):
-        out_name = wlist.replace('.words','_espeak.train')
+        extension = wlist.split('.')[-1]
+        extension = '.%s' % extension
+        out_name = wlist.replace(extension,'_espeak%s' % extension)
         with open(wlist,encoding='utf-8') as wordlist,\
                 open(out_name,'w',encoding='utf-8') as lexicon:
             for word in wordlist: 
