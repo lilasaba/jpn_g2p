@@ -38,12 +38,15 @@ class Token2Pron:
 
     def object2pron(self,objct):
         '''
+        Get pronunciation of tokens in 'Words' or 'Numerals' type objects.
+        Input:
         ('Words',['日本','すごい','食べる','パソコン','Sony'])
         ('Numerals',['32802','3,209','一〇〇','四百六十九'])
+        Output:
         '''
         object_type = objct[0]
         token_list = objct[1]
-        self.original_list = token_list
+        self.original_list = token_list[:]
         token_list = [self.token2romaji(token) for token in token_list]
         tmpwordlist = self.create_tempwordlist(token_list)
         self.wlist2pron(tmpwordlist.name)
@@ -54,13 +57,16 @@ class Token2Pron:
         if not romaji:
             print('Failing transliteration for token: %s' % token,\
                     file=sys.stderr)
-        return romaji
+            self.original_list.remove(token)
+        else:
+            return romaji
 
     def create_tempwordlist(self,token_list):
         tmpwordlist = tempfile.NamedTemporaryFile(delete=False)
         for token in token_list:
-            token = token.decode('utf-8')
-            print(token.encode('utf-8'),file=tmpwordlist)
+            if token:
+                token = token.decode('utf-8')
+                print(token.encode('utf-8'),file=tmpwordlist)
         tmpwordlist.close()
 
         return tmpwordlist
