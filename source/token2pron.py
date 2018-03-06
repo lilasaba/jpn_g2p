@@ -30,9 +30,10 @@ class Token2Pron:
         self.transliterate = Transliterate()
 
     def wlist2pron(self,word_list):
-        for word,score,pron in self.runG2PCommand(word_list) :
+        for i,(word,score,pron) in enumerate(self.runG2PCommand(word_list)):
+            token = self.original_list[i].decode('utf-8')
             line = u""
-            line = u"%s\t%s" % (word, pron)
+            line = u"%s\t%s\t%s" % (token,word,pron)
             print(line.encode("utf8"))
 
     def object2pron(self,objct):
@@ -42,6 +43,7 @@ class Token2Pron:
         '''
         object_type = objct[0]
         token_list = objct[1]
+        self.original_list = token_list
         token_list = [self.token2romaji(token) for token in token_list]
         tmpwordlist = self.create_tempwordlist(token_list)
         self.wlist2pron(tmpwordlist.name)
@@ -49,6 +51,9 @@ class Token2Pron:
     def token2romaji(self,token):
         romaji = self.transliterate.transliterate_token(token)
 
+        if not romaji:
+            print('Failing transliteration for token: %s' % token,\
+                    file=sys.stderr)
         return romaji
 
     def create_tempwordlist(self,token_list):
