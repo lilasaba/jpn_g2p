@@ -96,9 +96,8 @@ class ConvertNumber:
         #if not isinstance(kanji,unicode):
          #   kanji = unicode(kanji,enc)
 
-        # get the string as list of numbers
+        ## Get the string as list of numbers.
         nums = [self.kanji2arabic_dict[x] for x in kanji]
-        print(nums)
 
         num = 0
         while len(nums) > 1:
@@ -132,7 +131,6 @@ class ConvertNumber:
             factor = int(component / 10**exp)
             E = '%s[E%s]' % (factor,exp)
             num_list.append(E)
-        print('FACTORIZED',num_list)
 
         return num_list
 
@@ -148,7 +146,6 @@ class ConvertNumber:
         >>> ['1[E5]', '2[E4]', '4[E2]', '5[E1]', '6[E0]']
         '''
         new_list = [factor for factor in num_list if '0[' not in factor]
-        print(new_list)
 
         return new_list
 
@@ -172,11 +169,21 @@ class ConvertNumber:
             factor = '%s%s' % (count,power)
             new_list.append(factor)
 
-        print(new_list)
-
         return new_list
 
     def factors2written(self,num_list,factor_map):
+        '''
+        Convert final factor list to kanji or romaji script.
+        Input:
+            factor list
+        Output:
+            str
+        E.g.:
+        >>> factors2written(['1[E2]', '2[E1]', '3'],self.kanji_factor_map)
+        >>> '百二十三'
+        >>> factors2written(['1[E2]', '2[E1]', '3'],self.romaji_factor_map)
+        >>> 'hyakunijusan'
+        '''
         written = ''
         non_ichi_set = {'[E1]','[E2]','[E3]'}
         first_factor = True
@@ -199,11 +206,18 @@ class ConvertNumber:
                 written += ' %s' % factor_map[power]
             first_factor = False
 
-        print(written)
         return written.replace(' ','')
 
     def num2written(self,number):
         '''
+        Convert arabic number to kanji or romaji script.
+        Input:
+            str
+        Output:
+            str
+        E.g.:
+        >>> num2written('123')
+        >>> ('百二十三','hyakunijusan')
         '''
         number = number.replace(',','')
         if number == '0':
@@ -215,18 +229,15 @@ class ConvertNumber:
         kanji = self.factors2written(factor_list,self.factor_map_kanji)
         romaji = self.factors2written(factor_list,self.factor_map_romaji)
         
-        print(number)
-        print(factor_list)
-        print(kanji,romaji)
         return kanji,romaji
 
 if __name__ == '__main__':
     num_converter = ConvertNumber() 
     input_number = sys.argv[1]
     input_len = len(input_number)
-    kanji_len = len([k for k in inpit_number if k in num_converter.kanji2arabic_dict])
+    kanji_len = len([k for k in input_number if k in num_converter.kanji2arabic_dict])
     if re.search(r'^[0-9,]+$',input_number):
-        out = num_converter.num2written(input_number)
+        kanji,romaji = num_converter.num2written(input_number)
         print('Input number: %s\nKanji: %s\nRomaji: %s' \
                 % (input_number,kanji,romaji))
     elif input_len == kanji_len:
