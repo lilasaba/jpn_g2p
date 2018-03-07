@@ -12,7 +12,7 @@ class Transliterate:
     Convert lexica or wordlists.
     How to run:
     >>> source activate <python2.7_env>
-    >>> python translitearte.py <path/to/input_name>
+    >>> python transliterate.py <path/to/input_name>
     Output:
         <../input_name/input_name_romaji> 
 

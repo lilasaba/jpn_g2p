@@ -23,20 +23,20 @@ class Word2Pron:
 
     def word2ipa(self,word):
         pron = check_output(["espeak", "-q","--ipa",
-            '--sep=|',
+            '--sep= ',
             '-v','ja',
             word]).decode('utf-8')
         return pron
 
     def remove_espeak_markup(self,pron):
-        pron = pron.replace('(en)','')
-        pron = pron.replace('(ja)','')
-        pron = pron.replace(' ','')
+        ## Remove invalid transcriptions.
+        if '(en)' in pron:
+            return None
+        pron = pron.strip()
         ## Remove accent (marked by u'\u02c8').
         pron = pron.replace(chr(712),'')
-        ## 
-        pron = pron.replace('|',' ')
-        pron = pron.strip()
+        ## Make sure there is only one space separating phonemes. 
+        pron = ' '.join(pron.split())
 
         return pron
 
@@ -56,12 +56,9 @@ class Word2Pron:
                         self.espeak_phoneme_set.add(ph)
                     lexicon.write('%s\t%s\n' % (word,pron))
 
-        print(self.espeak_phoneme_set)
-        print(self.espeak_phoneme_set & self.wikt_phoneme_set)
-        print(self.espeak_phoneme_set - self.wikt_phoneme_set)
-        print(self.wikt_phoneme_set - self.espeak_phoneme_set)
-
 if __name__ == '__main__':
     wordlist = sys.argv[1]
     jpn_w2p = Word2Pron()
     jpn_w2p.in2out(wordlist)
+    print(jpn_w2p.espeak_phoneme_set)
+    print(jpn_w2p.wikt_phoneme_set)
