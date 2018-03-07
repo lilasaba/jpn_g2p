@@ -9,6 +9,8 @@ import re
 import subprocess
 import sys
 import tempfile
+from number_converter import ConvertNumber
+from romaji2katakana import Romaji2Katakana
 from transliterate import Transliterate
 
 '''
@@ -28,6 +30,10 @@ class Token2Pron:
         self.pmass = kwargs.get ("pmass", 0.0)
         self.probs = kwargs.get ("probs", False)
         self.transliterate = Transliterate()
+        self.romaji2katakana = Romaji2Katakana()
+        self.katakana = False
+        if 'katakana' in self.model:
+            self.katakana = True
 
     def wlist2pron(self,word_list):
         for i,(word,score,pron) in enumerate(self.runG2PCommand(word_list)):
@@ -47,8 +53,17 @@ class Token2Pron:
         object_type = objct[0]
         token_list = objct[1]
         self.original_list = token_list[:]
-        token_list = [self.token2romaji(token) for token in token_list]
-        tmpwordlist = self.create_tempwordlist(token_list)
+        ## Character conversions.
+        new_list = []
+        for token in token_list:
+            out = self.token2romaji(token)
+            if out and self.katakana:
+                out = self.rom2kata(out,token) 
+            if out:
+                new_list.append(out)
+        ## Create temp wordlist from list as phonetisaurus only 
+        ## accept files as input.
+        tmpwordlist = self.create_tempwordlist(new_list)
         self.wlist2pron(tmpwordlist.name)
 
     def token2romaji(self,token):
@@ -60,6 +75,16 @@ class Token2Pron:
             self.original_list.remove(token)
         else:
             return romaji
+
+    def rom2kata(self,token,orig):
+        katakana = self.romaji2katakana.romaji2katakana(token)
+
+        if not katakana:
+            print('Failing romaji to katakana conversion for token: %s' % token,\
+                    file=sys.stderr)
+            self.original_list.remove(orig)
+        else:
+            return katakana
 
     def create_tempwordlist(self,token_list):
         tmpwordlist = tempfile.NamedTemporaryFile(delete=False)
@@ -129,11 +154,12 @@ class Token2Pron:
 
 if __name__ == '__main__':
 
-    jpn_g2p_espeak = Token2Pron(\
-            '../jpn_leeds_romaji_uniq_espeak/jpn_leeds_romaji_uniq_espeak.o7.fst')
+    jpn_g2p_katakana = Token2Pron(\
+            '../jpn_romaji_uniq_to_katakana_uniq_espeak/jpn_romaji_uniq_to_katakana_uniq_espeak.o7.fst')
     jpn_g2p = Token2Pron(\
             '../jpn_wiktionary_romaji/jpn_wiktionary_romaji.o7.fst')
     objects = [('Words',['日本','すごい','食べる','パソコン','Sony']),
             ('Numerals',['32802','3,209','一〇〇','四百六十九'])]
     for objct in objects:
         jpn_g2p.object2pron(objct)
+        jpn_g2p_katakana.object2pron(objct)

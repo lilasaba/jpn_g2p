@@ -1,6 +1,7 @@
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
 import glob
 import re
 import sys
@@ -17,12 +18,15 @@ How to run:
 '''
 
 class Romaji2Katakana:
-    def __init__(self,chart):
+    def __init__(self):
+        self.py_version = sys.version_info[0]
         self.chart = ''
-        with open(chart) as chrt:
+        with open('katakanaChart.txt') as chrt:
             for line in chrt:
-                #line = line.decode('utf-8')
+                if self.py_version == 2:
+                    line = line.decode('utf-8')
                 self.chart += line
+        self.chartParse()
 
     def chartParse(self):
         """
@@ -53,8 +57,10 @@ class Romaji2Katakana:
         return chartDict
 
     def invert_dict(self,dct):
-        inv_dict = {v: k for k, v in dct.items()}
-        #inv_dict = {v: k for k, v in dct.iteritems()}
+        if self.py_version == 3:
+            inv_dict = {v: k for k, v in dct.items()}
+        elif self.py_version == 2:
+            inv_dict = {v: k for k, v in dct.iteritems()}
         
         return inv_dict
 
@@ -77,14 +83,15 @@ class Romaji2Katakana:
                 print('No katakana form for word %s' % word)
                 break
 
-        return ''.join(syllables)
+        katakana = ''.join(syllables)
+        if self.py_version == 2:
+            katakana = katakana.encode('utf-8')
+        return katakana
 
 if __name__ == '__main__':
     wordlist = sys.argv[1]
     out_name = wordlist.replace('.words','_to_katakana.words')
-    chart = 'katakanaChart.txt'
-    r2k =  Romaji2Katakana(chart)
-    r2k.chartParse()
+    r2k =  Romaji2Katakana()
     with open(wordlist,encoding='utf-8') as inf, \
             open(out_name,'w',encoding='utf-8') as outf:
         for line in inf:
