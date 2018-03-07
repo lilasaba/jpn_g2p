@@ -7,12 +7,10 @@
 + [data](https://drive.google.com/drive/folders/0B7R_gATfZJ2aWkpSWHpXUklWUmM)
 
 ### Transcribe wordlists with e-speak
-+ [Leeds wordlist](http://corpus.leeds.ac.uk/frqc/internet-jp-forms.num)
 
 ## Transliteration
 
-+ [tokenizer: cabocha](git@github.com:SamuraiT/easy-cabocha.git)
-+ [jpn2romanji](http://jprocessing.readthedocs.io/en/latest/#kanji-katakana-hiragana-to-tokenized-romaji-jconvert-py)
+[http://jprocessing.readthedocs.io/en/latest/#kanji-katakana-hiragana-to-tokenized-romaji-jconvert-py](jpn2romanji)
 
 ## G2P training with Phonetisaurus
 
