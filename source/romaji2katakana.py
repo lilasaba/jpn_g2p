@@ -5,6 +5,17 @@ import glob
 import re
 import sys
 
+'''
+Convert romaji script to katakana.
+Input:
+    romaji wordlist
+Output:
+    katakana wordlist at the same directory
+How to run:
+    source activate python3
+    python romaji2katakana.py <path/to/wordlist>
+'''
+
 class Romaji2Katakana:
     def __init__(self,chart):
         self.chart = ''
@@ -66,8 +77,7 @@ class Romaji2Katakana:
                 print('No katakana form for word %s' % word)
                 break
 
-        print(' '.join(syllables))
-        return ' '.join(syllables)
+        return ''.join(syllables)
 
 if __name__ == '__main__':
     wordlist = sys.argv[1]
