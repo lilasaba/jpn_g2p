@@ -17,7 +17,7 @@ wlist=${wlist}_uniq
 
 ## Romaji to katakana conversion.
 echo 'Converting from romaji to katakana...'
-source activate eudikt
+source activate py3
 python romaji2katakana.py ${wlist}.${ext}
 wlist=${wlist}_to_katakana
 
