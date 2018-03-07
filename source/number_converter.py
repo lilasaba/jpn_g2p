@@ -1,4 +1,7 @@
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
+# -*- coding: utf-8 -*-
+
+from __future__ import print_function
 
 import re
 import sys
@@ -8,9 +11,6 @@ Number converter modul:
     + kanji to arabic
     + arabic to kanji
     + arabic to romaji
-
-The 'kanji to arabic' method was based on:
-http://ginstrom.com/scribbles/2009/04/28/converting-kanji-numbers-to-integers-with-python/
 '''
 
 class ConvertNumber:
@@ -92,6 +92,9 @@ class ConvertNumber:
         Convert the kanji number to a Python integer.
         Supply `kanji` as a unicode string,or a byte string
         with the encoding specified in `enc`.
+
+        Based on:
+        http://ginstrom.com/scribbles/2009/04/28/converting-kanji-numbers-to-integers-with-python/
         """
         #if not isinstance(kanji,unicode):
          #   kanji = unicode(kanji,enc)
@@ -221,7 +224,7 @@ class ConvertNumber:
         '''
         number = number.replace(',','')
         if number == '0':
-            return '〇','zero'
+            return '〇','rei'
 
         factor_list = self.num2factors(number)
         factor_list = self.remove_zero_factors(factor_list)

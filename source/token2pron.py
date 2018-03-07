@@ -34,29 +34,55 @@ class Token2Pron:
         self.katakana = False
         if 'katakana' in self.model:
             self.katakana = True
+        self.num_converter = ConvertNumber()
+        self.arabic_pat = re.compile(r'^[0-9,]+$')
+        self.numeral = False
 
     def wlist2pron(self,word_list):
+        '''
+        Input:
+            list of words
+        Output:
+            list of tuples of word-pron pairs
+        '''
+        word_pron_pair_list = []
         for i,(word,score,pron) in enumerate(self.runG2PCommand(word_list)):
             token = self.original_list[i].decode('utf-8')
             line = u""
             line = u"%s\t%s\t%s" % (token,word,pron)
+            word_pron_pair_list.append((token.encode("utf8"),pron.encode("utf8")))
+
             print(line.encode("utf8"))
+
+        return word_pron_pair_list
 
     def object2pron(self,objct):
         '''
         Get pronunciation of tokens in 'Words' or 'Numerals' type objects.
         Input:
-        ('Words',['日本','すごい','食べる','パソコン','Sony'])
-        ('Numerals',['32802','3,209','一〇〇','四百六十九'])
+            tuple of (token_type,toke_list), e.g.:
+            ('Words',['日本','すごい','食べる','パソコン','Sony'])
+            ('Numerals',['32802','3,209','一〇〇','四百六十九'])
         Output:
+            list of tuples of (word,pron)
         '''
         object_type = objct[0]
         token_list = objct[1]
+        if object_type == 'Numerals':
+            self.numeral = True
         self.original_list = token_list[:]
+        ## Handle number conversion.
+        if self.numeral:
+            token_list = [self.number2written(num) for num in token_list]
         ## Character conversions.
         new_list = []
         for token in token_list:
-            out = self.token2romaji(token)
+            out = None
+            if not self.numeral:
+                out = self.token2romaji(token)
+            elif self.numeral:
+                out = token
+            ## Convert to katakana if model is katakana-based.
             if out and self.katakana:
                 out = self.rom2kata(out,token) 
             if out:
@@ -64,7 +90,9 @@ class Token2Pron:
         ## Create temp wordlist from list as phonetisaurus only 
         ## accept files as input.
         tmpwordlist = self.create_tempwordlist(new_list)
-        self.wlist2pron(tmpwordlist.name)
+        word_pron_pair_list = self.wlist2pron(tmpwordlist.name)
+
+        return word_pron_pair_list
 
     def token2romaji(self,token):
         romaji = self.transliterate.transliterate_token(token)
@@ -95,6 +123,29 @@ class Token2Pron:
         tmpwordlist.close()
 
         return tmpwordlist
+
+    def number2written(self,number):
+        '''
+        '''
+        number = number.decode('utf-8') 
+        out = None
+        input_len = len(number)
+        kanji_len = len([k for k in number if k in self.num_converter.kanji2arabic_dict])
+
+        ## Convert arabic to romaji.
+        if self.arabic_pat.search(number):
+            _,out = self.num_converter.num2written(number)
+        ## Convert kanji to arabic, and arabic to romaji.
+        elif input_len == kanji_len:
+            out = self.num_converter.kanji2num(number)
+            _,out = self.num_converter.num2written(out)
+        else:
+            print('Input format is not supported for %s' % number,
+                    file=sys.stderr)
+            self.original_list.remove(number)
+
+        if out:
+            return out
 
     def makeG2PCommand (self, word_list) :
         """Build the G2P command.
@@ -162,4 +213,5 @@ if __name__ == '__main__':
             ('Numerals',['32802','3,209','一〇〇','四百六十九'])]
     for objct in objects:
         jpn_g2p.object2pron(objct)
+    for objct in objects:
         jpn_g2p_katakana.object2pron(objct)

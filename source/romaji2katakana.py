@@ -80,7 +80,7 @@ class Romaji2Katakana:
             ## If it is not possible to syllabify to word
             ## (e.g. Eglish words like administration), skip the word.
             if c > 300:
-                print('No katakana form for word %s' % word)
+                print('No katakana form for word (part) %s' % word)
                 break
 
         katakana = ''.join(syllables)
