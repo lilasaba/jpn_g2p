@@ -8,6 +8,29 @@
 + Grapheme-to-Phoneme Models for (Almost) Any Language (Deri and Knight, ACL 2016)
 + [data](https://drive.google.com/drive/folders/0B7R_gATfZJ2aWkpSWHpXUklWUmM)
 
+### Leeds University wordlist
+
+### Transliteration: kanji/katakana/hiragana-to-romaji
+[This tool](http://jprocessing.readthedocs.io/en/latest/#kanji-katakana-hiragana-to-tokenized-romaji-jconvert-py) supports kanji/katakana/hiragana-to-romaji transcription.  
+Transliteration is much needed to simplify the g2p training, as less input symbols / smaller grapheme inventory reduces the noise.
+
+#### Installation
+See instructions at [official documentation page](http://jprocessing.readthedocs.io/en/latest/#install).
+
+#### Run kanji/katakana/hiragana-to-romaji transliteration
+
+    cd source
+    source activate <python3_env>
+    python transliterate <path/to/wordlist_or_lexicon>
+    ## Output in <path_to_wordlist_or_lexicon>
+
+### Transliteration: romaji-tok-katakana
+
+    cd source
+    source activate <python3_env>
+    python romaji2katakana.py <path/to/wordlist>.words
+    ## Output in <path_to_wordlist>
+
 ### Transcribe wordlists with espeak
 
 The Japanese voice of espeak accepts only hiragama script as input.
@@ -15,18 +38,34 @@ The Japanese voice of espeak accepts only hiragama script as input.
 #### Installation
 See instructions at the [github repo](https://github.com/espeak-ng/espeak-ng).
 
-## Transliteration
-[This tool](http://jprocessing.readthedocs.io/en/latest/#kanji-katakana-hiragana-to-tokenized-romaji-jconvert-py) supports kanji/katakana/hirgana-to-romaji transcription.  
-Transliteration ismuch neede to simplify the g2p training, as less input symbols / smaller grapheme inventory reduces the noise.
+#### Run G2P transcription with espeak
 
-#### Installation
-See instructions at [official documentation page](http://jprocessing.readthedocs.io/en/latest/#install).
+    cd source
+    source activate <python3_env>
+    python wlist2lex.py <path/to/wordlist>.words
+    ## Output in <path_to_wordlist>
+    
+### Split wordlist into train and test (0.9/0.1)
+
+    cd source
+    source activate <python3_env>
+    python split_to_train_test.py <path/to/wordlist>.words
+    ## Output in <path_to_wordlist>.train, <path_to_wordlist>.test
 
 ## G2P training with Phonetisaurus
 
 #### Installation
 See installation instructions at [the github repo](https://github.com/AdolfVonKleist/Phonetisaurus).
 
+### Run G2P training and evaluation with Phonetisaurus
+
+    cd source
+    source activate <python2_env>
+    ./train_model.sh <lexicon_dir_name>
+    ## Output: 
+    ## <lexicon_dir_name>/<lexicon_dir_name>oN.arpa
+    ## <lexicon_dir_name>/<lexicon_dir_name>_oN.fst
+    
 ## Number conversion
 
     cd source
@@ -40,4 +79,4 @@ See installation instructions at [the github repo](https://github.com/AdolfVonKl
     Input number: 百二十三
     Arabic number: 123
 
-
+## Convert 'Words' or 'Numbers' token lists to pronunciations
