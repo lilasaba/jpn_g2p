@@ -60,5 +60,5 @@ if __name__ == '__main__':
     wordlist = sys.argv[1]
     jpn_w2p = Word2Pron()
     jpn_w2p.in2out(wordlist)
-    print(jpn_w2p.espeak_phoneme_set)
-    print(jpn_w2p.wikt_phoneme_set)
+    #print(jpn_w2p.espeak_phoneme_set)
+    #print(jpn_w2p.wikt_phoneme_set)

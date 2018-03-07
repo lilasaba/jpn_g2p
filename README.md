@@ -20,8 +20,8 @@ See instructions at [official documentation page](http://jprocessing.readthedocs
 #### Run kanji/katakana/hiragana-to-romaji transliteration
 
     cd source
-    source activate <python3_env>
-    python transliterate <path/to/wordlist_or_lexicon>
+    source activate <python2_env>
+    python transliterate.py <path/to/wordlist_or_lexicon>
     ## Output in <path_to_wordlist_or_lexicon>
 
 ### Transliteration: romaji-tok-katakana
