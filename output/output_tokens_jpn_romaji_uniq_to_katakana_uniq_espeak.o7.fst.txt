@@ -1,0 +1,10 @@
+Words	日本	n i p o̞ ɴ
+Words	すごい	s ɯᵝ ɡ o̞ i
+Words	食べる	t ä b e̞ ɽ ɯᵝ
+Words	パソコン	p ˌä s o̞ k o̞ ɴ
+Words	Sony	s o̞ ɴ
+Numerals	32802	s ä m m ä n n i s e̞ ũ h ä tɕ i ç ˌä k ɯᵝ ũ i
+Numerals	3	s ä ɴ
+Numerals	209	n i ç ˌä k ɯᵝ kʲ ɯᵝ
+Numerals	一〇〇	i tɕ i
+Numerals	四百六十九	j ˌo̞ ũ ç ˌä k ɯᵝ ɽ o̞ k ɯᵝ

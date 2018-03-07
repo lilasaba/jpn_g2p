@@ -203,15 +203,33 @@ class Token2Pron:
 
         return
 
-if __name__ == '__main__':
+    def in_to_out(self,infile):
+        out_name = infile.replace('input','output')
+        model_basename = os.path.basename(self.model)
+        out_name = out_name.replace('.txt','_%s.txt' % \
+                model_basename)
+        objects = []
+        with open(infile) as inf, open(out_name,'wb') as outf:
+            for line in inf:
+                line = line.strip()
+                obj_type,obj_tokens = line.split('\t')
+                obj_token_list = obj_tokens.split(' ')
+                objct = (obj_type,obj_token_list)
+                output = self.object2pron(objct)
+                for tple in output:
+                    outf.write('%s\t%s\t%s\n' % (obj_type,tple[0],tple[1]))
 
+if __name__ == '__main__':
+    infile = sys.argv[1]
     jpn_g2p_katakana = Token2Pron(\
             '../jpn_romaji_uniq_to_katakana_uniq_espeak/jpn_romaji_uniq_to_katakana_uniq_espeak.o7.fst')
     jpn_g2p = Token2Pron(\
             '../jpn_wiktionary_romaji/jpn_wiktionary_romaji.o7.fst')
-    objects = [('Words',['日本','すごい','食べる','パソコン','Sony']),
-            ('Numerals',['32802','3,209','一〇〇','四百六十九'])]
-    for objct in objects:
-        jpn_g2p.object2pron(objct)
-    for objct in objects:
-        jpn_g2p_katakana.object2pron(objct)
+#    objects = [('Words',['日本','すごい','食べる','パソコン','Sony']),
+#            ('Numerals',['32802','3,209','一〇〇','四百六十九'])]
+#    for objct in objects:
+#        jpn_g2p.object2pron(objct)
+#    for objct in objects:
+#        jpn_g2p_katakana.object2pron(objct)
+    jpn_g2p_katakana.in_to_out(infile)
+    jpn_g2p.in_to_out(infile)
