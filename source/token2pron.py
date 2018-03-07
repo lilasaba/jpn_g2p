@@ -20,7 +20,7 @@ class Token2Pron:
     def __init__(self,model,**kwargs):
         self.model = model
         self.lexicon_file = kwargs.get ("lexicon", None)
-        self.nbest = kwargs.get ("nbest", 2)
+        self.nbest = kwargs.get ("nbest", 1)
         self.thresh = kwargs.get ("thresh", 99)
         self.beam = kwargs.get ("beam", 10000)
         self.greedy = kwargs.get ("greedy", False)
@@ -129,8 +129,10 @@ class Token2Pron:
 
 if __name__ == '__main__':
 
-    jpn_g2p = Token2Pron(\
+    jpn_g2p_espeak = Token2Pron(\
             '../jpn_leeds_romaji_uniq_espeak/jpn_leeds_romaji_uniq_espeak.o7.fst')
+    jpn_g2p = Token2Pron(\
+            '../jpn_wiktionary_romaji/jpn_wiktionary_romaji.o7.fst')
     objects = [('Words',['日本','すごい','食べる','パソコン','Sony']),
             ('Numerals',['32802','3,209','一〇〇','四百六十九'])]
     for objct in objects:
