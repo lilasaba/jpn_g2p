@@ -8,7 +8,6 @@ import sys
 '''
 Split file into train and test sets randomly with a given ratio.
 How to run:
-    >>> source activate python3.5
     >>> python split_to_train_test.py <path/to/wordlist>
 Output:
     <path_to_wordlist>.train
@@ -36,17 +35,17 @@ def split_into_train_and_test(fname,line_count,ratio=0.9):
     test_name = fname.replace(extension,'test')
     a = np.random.binomial(1,ratio,line_count)
     with open(fname) as inf,\
-            open(train_name,'w',encoding='utf-8') as train,\
-            open(test_name,'w',encoding='utf-8') as test:
+            open(train_name,'wb') as train,\
+            open(test_name,'wb') as test:
         for i,line in enumerate(inf):
+            line = line.decode('utf-8')
             if a[i]:
-                train.write(line)
+                train.write(line.encode('utf-8'))
             else:
-                test.write(line)
+                test.write(line.encode('utf-8'))
 
 if __name__ == '__main__':
     infile = sys.argv[1]
     line_count = count_lines(infile)
     print('Line count in %s: %s' % (infile,line_count))
     split_into_train_and_test(infile,line_count)
-

@@ -1,5 +1,10 @@
 #!/bin/bash
 
+## Wordlist to g2p model runfile.
+## How to run:
+## ./run_wordlist_to_mdel.sh <path/to/wordlist>
+
+source activate py2
 lexicon=$1
 lexicon=${lexicon%.*}
 ext="${1##*.}"
@@ -7,7 +12,6 @@ echo $lexicon $ext
 
 ## Kanji/hiragana/katakana to romaji conversion.
 echo 'Converting from kanji/hiragana/katakana to romaji...'
-source activate py2
 python transliterate.py ${lexicon}.${ext}
 lexicon=${lexicon}_romaji
 
@@ -16,7 +20,6 @@ sort ${lexicon}.${ext} | uniq > ${lexicon}_uniq.${ext}
 lexicon=${lexicon}_uniq
 
 ## Split lexicon into train and test set (ratio: 0.9-0.1)
-source activate py3
 echo 'Create train and test sets...'
 python split_to_train_test.py ${lexicon}.${ext}
 

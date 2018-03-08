@@ -13,7 +13,6 @@ Input:
 Output:
     katakana wordlist at the same directory
 How to run:
-    source activate python3
     python romaji2katakana.py <path/to/wordlist>
 '''
 
@@ -92,10 +91,20 @@ if __name__ == '__main__':
     wordlist = sys.argv[1]
     out_name = wordlist.replace('.words','_to_katakana.words')
     r2k =  Romaji2Katakana()
-    with open(wordlist,encoding='utf-8') as inf, \
-            open(out_name,'w',encoding='utf-8') as outf:
-        for line in inf:
-            word = line.strip()
-            katakana = r2k.romaji2katakana(word)
-            if katakana:
-                outf.write('%s\n' % katakana)
+    if r2k.py_version == 3:
+        with open(wordlist,encoding='utf-8') as inf, \
+                open(out_name,'w',encoding='utf-8') as outf:
+            for line in inf:
+                word = line.strip()
+                katakana = r2k.romaji2katakana(word)
+                if katakana:
+                    outf.write('%s\n' % katakana)
+    elif r2k.py_version == 3:
+        with open(wordlist) as inf, \
+                open(out_name,'wb') as outf:
+            for line in inf:
+                line = line.decode('utf-8')
+                word = line.strip()
+                katakana = r2k.romaji2katakana(word)
+                if katakana:
+                    outf.write('%s\n' % katakana.encode(utf-8))

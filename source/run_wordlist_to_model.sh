@@ -1,5 +1,10 @@
 #!/bin/bash
 
+## Wordlist to g2p model runfile.
+## How to run:
+## ./run_wordlist_to_mdel.sh <path/to/wordlist>
+
+source activate py2
 wlist=$1
 wlist=${wlist%.*}
 ext="${1##*.}"
@@ -7,7 +12,6 @@ echo $wlist $ext
 
 ## Kanji/hiragana/katakana to romaji conversion.
 echo 'Converting from kanji/hiragana/katakana to romaji...'
-source activate py2
 python transliterate.py ${wlist}.${ext}
 wlist=${wlist}_romaji
 
@@ -17,7 +21,6 @@ wlist=${wlist}_uniq
 
 ## Romaji to katakana conversion.
 echo 'Converting from romaji to katakana...'
-source activate py3
 python romaji2katakana.py ${wlist}.${ext}
 wlist=${wlist}_to_katakana
 
@@ -45,5 +48,4 @@ cp ${wlist}.test ../${dir}
 
 ## Train and evaluate g2p model with phonetisaurus.
 echo 'Training g2p model with phonetisaurus...'
-source activate py2
 ./train_model.sh $dir
