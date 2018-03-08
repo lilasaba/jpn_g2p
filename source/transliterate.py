@@ -44,11 +44,12 @@ class Transliterate:
         bname = '.'.join(os.path.basename(lexicon).split('.')[:-1])
         bname = '%s_romaji' % bname
         extension = lexicon.split('.')[-1]
+        pathname = os.path.dirname(lexicon)
         ## Create output directory, if it doesn't exist.
         if not os.path.exists('../%s' % bname):
             os.makedirs('../%s' % bname)
         ## Define output lexicon name.
-        transliterated_lexicon = '../%s/%s.%s' % (bname,bname,extension) 
+        transliterated_lexicon = '%s/%s.%s' % (pathname,bname,extension) 
         with open(lexicon) as inf, open(transliterated_lexicon,'wb') as outf:
             for line in inf:
                 self.token_count += 1
@@ -90,10 +91,10 @@ if __name__ == '__main__':
     extension = lexicon.split('.')[-1]
     if extension == 'words':
         example.transliterate_wordlist(lexicon)
-    elif extension == 'train' or extension == 'test':
+    elif extension == 'lex':
         example.transliterate_lexicon(lexicon)
     else:
-        print 'Only accepting wordlists (*.words) or lexica (*.train, *.test)'
+        print 'Only accepting wordlists (*.words) or lexica (*.lex)'
 
     print 'Token count: %d\nRoman word count: %d\nOmitting %d tokens' \
             % (example.token_count,example.latin_count,example.omit_count)

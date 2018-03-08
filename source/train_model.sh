@@ -23,7 +23,7 @@ phonetisaurus-arpa2wfst --lm=${dir}/${dict}.o${ngram_order}.arpa \
 
 ## Test model.
 cat ${dir}/${dict}.test | cut -f1 > ${dir}/${dict}.words
-cat ${dir}/${dict}.test > ${dir}/${dict}.ref
+python create_ref.py ${dir}/${dict}.test
 phonetisaurus-apply --model ${dir}/${dict}.o${ngram_order}.fst \
 	--word_list ${dir}/${dict}.words \
 	-n 2 -g -v > ${dir}/${dict}.hyp
