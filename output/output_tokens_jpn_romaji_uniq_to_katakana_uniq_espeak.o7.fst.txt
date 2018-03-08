@@ -8,3 +8,9 @@ Numerals	3	s ä ɴ
 Numerals	209	n i ç ˌä k ɯᵝ kʲ ɯᵝ
 Numerals	一〇〇	i tɕ i
 Numerals	四百六十九	j ˌo̞ ũ ç ˌä k ɯᵝ ɽ o̞ k ɯᵝ
+Numerals	二百三十四	n i ç ˌä k ɯᵝ s ä ɴ
+Numerals	234	n i ç ˌä k ɯᵝ s ä ɴ
+Numerals	三千	s ˌä ũ s e̞ ɴ
+Numerals	3000	s ˌä ũ s e̞ ɴ
+Numerals	百二十三万五百六十七	ç ˌä k ɯᵝ ũ i
+Numerals	1230567	ç ˌä k ɯᵝ ũ i
