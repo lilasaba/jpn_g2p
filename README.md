@@ -68,7 +68,16 @@ See installation instructions at [the github repo](https://github.com/AdolfVonKl
     
 ## Number conversion
 
+The main idea behind arabic-to-written/romaji/kanji conversion is to represent numbers as factors of the powers of ten.
+`12345`  
+would become  
+`1*10^4 + 2*10^3 + 3*10^2 + 4*10^1 + 5*10^0`  
+which can be represented as a list of factors  
+`['1[E4]','2[E3]','3[E2]','4[E1]','5[E0]']`.  
+This representation is easy to then to map to the written forms of numbers in a given language, but depending on the language a few further modifications of the list is needed.  
+
     cd source
+    source activate <python3_env>
 	## Arabic to kanji/romaji.
 	python number_converter.py 123
 	Input number: 123
