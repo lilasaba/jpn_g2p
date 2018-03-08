@@ -1,6 +1,17 @@
 # Japanese G2P (grapheme-to-phoneme) and N2W (number-to-word) converter
 
+## Introduction
+
+This repo contains scripts that return the pronunciations of Japanese words (written in kanji/katakana/hiragana/romaji)
+and numerals (kanji or arabic).
+There are two main components in this process:
+
+1. G2P modeling
+2. Number conversion
+
 ## Dependencies
+
+The code has been implemented and tested on Ubuntu 14.04.
 
 ### Python 2.7 environment with numpy
 
@@ -25,8 +36,8 @@ See installation instructions at the [github repo](https://github.com/AdolfVonKl
 
 ## Lexicon acquisition
 
-Finding non-propietary Japanese pronunciation lexica, that could be used as tarining data for the grapheme-to-phoneme (g2p) modeling,
-turned out to be non-straightforward, so for the basic g2p modeling they need to be created.
+Finding non-propietary Japanese pronunciation lexica, that could be used as training data for the grapheme-to-phoneme (g2p) modeling,
+turned out to be non-straightforward - so for the basic g2p modeling, the pronunciation dictionaries had to be created.
 Here I used two ways to create pronunciation lexica:
 
 + scrape Japanese Wiktionary for word-pron pairs
@@ -34,10 +45,12 @@ Here I used two ways to create pronunciation lexica:
 
 ### Wiktionary data
 
-One option is to download the Japanese Wiktionary dump, and extract the wod-pronunciation pairs.  
-Fortunately this work has already been done in [this paper](https://aclweb.org/anthology/P/P16/P16-1038.pdf) with the [data](https://drive.google.com/drive/folders/0B7R_gATfZJ2aWkpSWHpXUklWUmM) made available publicly.  
+One option is to download the Japanese Wiktionary dump, and extract the word-pronunciation pairs.  
+Fortunately this work has already been done in [this paper](https://aclweb.org/anthology/P/P16/P16-1038.pdf)
+with the [data](https://drive.google.com/drive/folders/0B7R_gATfZJ2aWkpSWHpXUklWUmM) made available publicly.  
 The Japanese part of the data contains an overall 2k word-pron pairs - which is not too much.
-This lexicon consists of words written in kanji, katakana, hiragana and the Latin alphabet and their respective pronunciation of ipa symbols.
+This lexicon consists of words written in kanji, katakana, hiragana and the Latin alphabet (romaji)
+and their respective pronunciation of ipa symbols.
 
 ### Leeds University wordlist
 
@@ -52,8 +65,8 @@ as `wordlists/jpn_wiktionary.lex` and `wordlists/jpn.words`.
 
 ### Transliteration: kanji/katakana/hiragana-to-romaji
 
-As the japanese writing system uses four "alphabets" (kanji, katakana, hiragana and romaji) and the lexical resources are scarce,
-transliteration (to romaji) is much needed to simplify the g2p training, as less input symbols / smaller grapheme inventory reduces the noise.
+As the Japanese writing system uses four "alphabets" (kanji, katakana, hiragana and romaji) and the lexical resources are scarce,
+transliteration (to romaji) is much needed to simplify the g2p training, as smaller grapheme inventory reduces the noise.
 
 The [jProcessing tool](http://jprocessing.readthedocs.io/en/latest/#kanji-katakana-hiragana-to-tokenized-romaji-jconvert-py)
 supports kanji/katakana/hiragana-to-romaji conversion.  
@@ -66,7 +79,7 @@ supports kanji/katakana/hiragana-to-romaji conversion.
 
 ### Transliteration: romaji-to-katakana
 
-The Japanese voice of espeak accepts only hiragama script as input,
+The Japanese voice of espeak accepts only katakana (or hiragana) scripts as input,
 thus the already transliterated romaji words need to be converted to katakana.
 This step is only needed if the data needs to be processed with espeak (so for wordlists, not lexica).
 
@@ -89,7 +102,7 @@ This step is only needed if the data needs to be processed with espeak (so for w
 ## G2P training with Phonetisaurus
 
 To get the pronunciation of words that are not already in the lexicon, a g2p model has to be trained, using the lexicon as training data.
-Here I used [Phonetisaurus](https://github.com/AdolfVonKleist/Phonetisaurus), an open source WFST-based
+Here I used [Phonetisaurus](https://github.com/AdolfVonKleist/Phonetisaurus), an open source WFST-based g2p toolkit with EM-driven alignment and RNN language modeling.
 
 ### Run G2P training and evaluation with Phonetisaurus
 
@@ -120,6 +133,7 @@ are wrapped in two runfiles, which can be run as follows:
     
 The interim wordlists/lexica are created in the [wordlists](wordlists) directory,
 the fst models are in a directory whose name is identical to the lexicon name.
+They are also [shared here](https://drive.google.com/open?id=1HPOvT5NNR5pWzAG0e09P99jPaEbiAJvq).
     
 ## Number conversion
 
@@ -137,15 +151,17 @@ In western number factorization `[E1], [E2], [E3], [E6], [E9]` have distinctive 
 and everything in between is an iteration from `[E1]` to `[E3]`.
 So basically adding three to the exponent or by every three digit group, there is new distinctive name.  
 In the Japanese number system `[E1], [E2], [E3], [E4], [E8], [E12]` have distinct names `ju, hyaku, sen, man, oku, cho`,
-and everything in between is an iteration from `` (four digit/kanji groups).
+and everything in between is an iteration from `[E1]` to `[E4]` (four-digit/kanji groups).
 
 After mapping the factors according to the Japanese factorization, the factors themselves are also split
 into the basic elements that make up the written form;
 e.g. `2[E3]` to `2` and `[E3]`.
 From then on, we just need a dictionary that maps the basic elements into their written romaji or kanji forms,
-so `[E3]` to `` and `` to ``.
+so `2` to `san` and `[E3]` to `sen`.
 
 The [number converter](source/number_converter.py) supports both kanji-to-arabic and arabic-to-kanji/romaji conversions.
+
+### Sample run of the number converter
 
     cd source
     source activate <python3_env>
@@ -159,7 +175,7 @@ The [number converter](source/number_converter.py) supports both kanji-to-arabic
     Input number: 百二十三
     Arabic number: 123
 
-## Convert 'Words' or 'Numbers' objects to pronunciations
+## Convert 'Words' and 'Numbers' objects to pronunciations
 
 The following input format is supported:
 
@@ -183,9 +199,10 @@ The output is written in the [output directory](output), in the following format
     Numerals\ttoken2\tp r o n 2
     Numerals\ttoken3\tp r o n 3
     
-## Caveats
+## TODOs, warnings
 
-+ need more data
-+ merged phoneme inventory
-+ `一〇〇`
-+ only one pron as output
++ Need more data
++ Currently the two lexica/models use two different phoneme inventory sets, so cannot be merged. The phoneme inventories need to be unified. 
++ Not sure if `一〇〇` is a valid number, is it `1` or `100`?
++ Need to support multiple output pronunciations
++ etc.
