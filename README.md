@@ -1,61 +1,80 @@
 # Japanese G2P (grapheme-to-phoneme) and N2W (number-to-word) converter
 
-## Python2 vs Python3
+## Dependencies
+
+### Python 2.7 environment with numpy
+
+Create conda environment from `requirements_py27.txt`
+
+    conda create --name py2 --file requirements_py27.txt
+
+### JProcessing
+
+#### Installation
+See instructions at the [github repo](https://github.com/kevincobain2000/jProcessing).
+
+### Espeak
+
+#### Installation
+See instructions at the [github repo](https://github.com/espeak-ng/espeak-ng).
+
+### Phonetisaurus
+
+#### Installation
+See installation instructions at the [github repo](https://github.com/AdolfVonKleist/Phonetisaurus).
 
 ## Lexicon acquisition
 
 ### Wiktionary data
-+ Grapheme-to-Phoneme Models for (Almost) Any Language (Deri and Knight, ACL 2016)
-+ [data](https://drive.google.com/drive/folders/0B7R_gATfZJ2aWkpSWHpXUklWUmM)
+
+The work has already been done in [this paper](https://aclweb.org/anthology/P/P16/P16-1038.pdf)  
+with the [data](https://drive.google.com/drive/folders/0B7R_gATfZJ2aWkpSWHpXUklWUmM) made available publicly.  
+The Japanese part of the data contains an overall 2k word-pron pairs.  
+The 
 
 ### Leeds University wordlist
 
+[Japanese wordlist](http://corpus.leeds.ac.uk/frqc/internet-jp-forms.num) from the University of Leeds, containing 44k words.
+
 ### Transliteration: kanji/katakana/hiragana-to-romaji
-[This tool](http://jprocessing.readthedocs.io/en/latest/#kanji-katakana-hiragana-to-tokenized-romaji-jconvert-py) supports kanji/katakana/hiragana-to-romaji transcription.  
+
 Transliteration is much needed to simplify the g2p training, as less input symbols / smaller grapheme inventory reduces the noise.
 
-#### Installation
-See instructions at [official documentation page](http://jprocessing.readthedocs.io/en/latest/#install).
+The [jProcessing tool](http://jprocessing.readthedocs.io/en/latest/#kanji-katakana-hiragana-to-tokenized-romaji-jconvert-py) supports kanji/katakana/hiragana-to-romaji transcription.  
 
 #### Run kanji/katakana/hiragana-to-romaji transliteration
 
     cd source
-    source activate <python2_env>
     python transliterate.py <path/to/wordlist_or_lexicon>
-    ## Output in <path_to_wordlist_or_lexicon>
+    ## Output in <path/to/wordlist_or_lexicon>
 
-### Transliteration: romaji-tok-katakana
+### Transliteration: romaji-to-katakana
+
+This step is only needed if the data needs to be processed with espeak (so for wordlists, not lexica).
 
     cd source
-    source activate <python3_env>
     python romaji2katakana.py <path/to/wordlist>.words
-    ## Output in <path_to_wordlist>
+    ## Output in <path/to/wordlist>
 
 ### Transcribe wordlists with espeak
 
-The Japanese voice of espeak accepts only hiragama script as input.
-
-#### Installation
-See instructions at the [github repo](https://github.com/espeak-ng/espeak-ng).
+The Japanese voice of espeak accepts only hiragama script as input, thus the already transliterated romaji words need to be converted to katakana.
 
 #### Run G2P transcription with espeak
 
     cd source
     source activate <python3_env>
     python wlist2lex.py <path/to/wordlist>.words
-    ## Output in <path_to_wordlist>
+    ## Output in <path/to/wordlist>
     
 ### Split wordlist into train and test (0.9/0.1)
 
     cd source
-    source activate <python3_env>
     python split_to_train_test.py <path/to/wordlist>.words
-    ## Output in <path_to_wordlist>.train, <path_to_wordlist>.test
+    ## Output in <path/to/wordlist>.train, <path_to_wordlist>.test
 
 ## G2P training with Phonetisaurus
 
-#### Installation
-See installation instructions at [the github repo](https://github.com/AdolfVonKleist/Phonetisaurus).
 
 ### Run G2P training and evaluation with Phonetisaurus
 
