@@ -1,4 +1,5 @@
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
+# -*- coding: utf-8 -*-
 
 import glob
 import re
@@ -11,7 +12,6 @@ class Word2Pron:
     Dependencies: espeak (https://github.com/espeak-ng/espeak-ng/blob/master/README.md).
     Convert string (word2ipa) or lexicon (in2out).
     How to run:
-        >>> source activate python3.5
         >>> python wlist2lex.py <path/to/wordlist>.ext
     Output:
         <path/to/wordlist>_espeak.ext
@@ -34,7 +34,8 @@ class Word2Pron:
             return None
         pron = pron.strip()
         ## Remove accent (marked by u'\u02c8').
-        pron = pron.replace(chr(712),'')
+        #pron = pron.replace(chr(712),'')
+        pron = pron.replace(u'\u02c8','')
         ## Make sure there is only one space separating phonemes. 
         pron = ' '.join(pron.split())
 
@@ -44,9 +45,10 @@ class Word2Pron:
         extension = wlist.split('.')[-1]
         extension = '.%s' % extension
         out_name = wlist.replace(extension,'_espeak%s' % extension)
-        with open(wlist,encoding='utf-8') as wordlist,\
-                open(out_name,'w',encoding='utf-8') as lexicon:
+        with open(wlist) as wordlist,\
+                open(out_name,'wb') as lexicon:
             for word in wordlist: 
+                word = word.decode('utf-8')
                 word = word.strip()
                 pron = self.word2ipa(word)
                 pron = self.remove_espeak_markup(pron)
@@ -54,7 +56,8 @@ class Word2Pron:
                     #print(word,pron)
                     for ph in pron.split(' '):
                         self.espeak_phoneme_set.add(ph)
-                    lexicon.write('%s\t%s\n' % (word,pron))
+                    out_line = '%s\t%s\n' % (word,pron)
+                    lexicon.write(out_line.encode('utf-8'))
 
 if __name__ == '__main__':
     wordlist = sys.argv[1]
