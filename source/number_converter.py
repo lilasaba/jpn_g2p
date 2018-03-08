@@ -15,6 +15,7 @@ Number converter modul:
 
 class ConvertNumber:
     def __init__(self):
+        self.py_version = sys.version_info[0]
 
         ## Dicts for kanji to arabic conversion.
         self.num_map = ((0,u"〇"),
@@ -87,7 +88,7 @@ class ConvertNumber:
         else:
             return [first,second*third] + rest
 
-    def kanji2num(self,kanji,enc="utf-8"):
+    def kanji2num(self,kanji):
         """
         Convert the kanji number to a Python integer.
         Supply `kanji` as a unicode string,or a byte string
@@ -96,8 +97,6 @@ class ConvertNumber:
         Based on:
         http://ginstrom.com/scribbles/2009/04/28/converting-kanji-numbers-to-integers-with-python/
         """
-        #if not isinstance(kanji,unicode):
-         #   kanji = unicode(kanji,enc)
 
         ## Get the string as list of numbers.
         nums = [self.kanji2arabic_dict[x] for x in kanji]
@@ -237,6 +236,8 @@ class ConvertNumber:
 if __name__ == '__main__':
     num_converter = ConvertNumber() 
     input_number = sys.argv[1]
+    if num_converter.py_version == 2:
+        input_number = input_number.decode('utf-8')
     input_len = len(input_number)
     kanji_len = len([k for k in input_number if k in num_converter.kanji2arabic_dict])
     if re.search(r'^[0-9,]+$',input_number):
