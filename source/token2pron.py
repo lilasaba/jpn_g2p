@@ -224,7 +224,7 @@ if __name__ == '__main__':
     jpn_g2p_katakana = Token2Pron(\
             '../jpn_romaji_uniq_to_katakana_uniq_espeak/jpn_romaji_uniq_to_katakana_uniq_espeak.o7.fst')
     jpn_g2p = Token2Pron(\
-            '../jpn_wiktionary_romaji/jpn_wiktionary_romaji.o7.fst')
+            '../jpn_wiktionary_romaji_uniq/jpn_wiktionary_romaji_uniq.o7.fst')
 #    objects = [('Words',['日本','すごい','食べる','パソコン','Sony']),
 #            ('Numerals',['32802','3,209','一〇〇','四百六十九'])]
 #    for objct in objects:
