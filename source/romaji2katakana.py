@@ -99,7 +99,7 @@ if __name__ == '__main__':
                 katakana = r2k.romaji2katakana(word)
                 if katakana:
                     outf.write('%s\n' % katakana)
-    elif r2k.py_version == 3:
+    elif r2k.py_version == 2:
         with open(wordlist) as inf, \
                 open(out_name,'wb') as outf:
             for line in inf:
@@ -107,4 +107,4 @@ if __name__ == '__main__':
                 word = line.strip()
                 katakana = r2k.romaji2katakana(word)
                 if katakana:
-                    outf.write('%s\n' % katakana.encode(utf-8))
+                    outf.write('%s\n' % katakana)
