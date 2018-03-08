@@ -4,7 +4,7 @@
 
 ### Python 2.7 environment with numpy
 
-Create conda environment from `requirements_py27.txt`
+Create conda environment from [requirements file](requirements_py27.txt).
 
     conda create --name py2 --file requirements_py27.txt
 
@@ -25,7 +25,12 @@ See installation instructions at the [github repo](https://github.com/AdolfVonKl
 
 ## Lexicon acquisition
 
-As I could only 
+Finding non-propietary Japanese pronunciation lexica, that could be used as tarining data for the grapheme-to-phoneme (g2p) modeling,
+turned out to be non-straightforward, so for the basic g2p modeling they need to be created.
+Here I used two ways to create pronunciation lexica:
+
++ scrape Japanese Wiktionary for word-pron pairs
++ transcribe Japanese wordlists with [espeak](https://github.com/espeak-ng/espeak-ng) (an open source TTS system)
 
 ### Wiktionary data
 
@@ -36,6 +41,8 @@ This lexicon consists of words written in kanji, katakana, hiragana and the Lati
 
 ### Leeds University wordlist
 
+Another possibility is to find Japanese wordlists (easier than finding lexica),
+and transcribe them with espeak.
 [Japanese wordlist](http://corpus.leeds.ac.uk/frqc/internet-jp-forms.num) from the University of Leeds, containing 44k words.
 The wordlist consists of words written in kanji, katakana, hiragana and the Latin alphabet.
 
@@ -69,21 +76,20 @@ This step is only needed if the data needs to be processed with espeak (so for w
 
 ### Transcribe wordlists with espeak
 
-#### Run G2P transcription with espeak
-
     cd source
     python wlist2lex.py <path/to/wordlist>.words
     ## Output in <path/to/wordlist_espeak>.words
     
-### Split wordlist into train and test (0.9-0.1 ratio)
+### Split wordlist/lexicon into train and test sets
 
     cd source
-    python split_to_train_test.py <path/to/wordlist>.words
+    python split_to_train_test.py <path/to/wordlist:or_lexicon>.words/lex
     ## Output in <path/to/wordlist>.train, <path_to_wordlist>.test
 
 ## G2P training with Phonetisaurus
 
-From the acquired lexica
+To get the pronunciation of words that are not already in the lexicon, a g2p model has to be trained, using the lexicon as training data.
+Here I used [Phonetisaurus](https://github.com/AdolfVonKleist/Phonetisaurus), an open source WFST-based
 
 ### Run G2P training and evaluation with Phonetisaurus
 
@@ -93,7 +99,17 @@ From the acquired lexica
     ## <lexicon_dir_name>/<lexicon_dir_name>.oN.arpa, where N is the n-gram order
     ## <lexicon_dir_name>/<lexicon_dir_name>.oN.fst
     
-### Run wordlist/lexicon to g2p model scripts
+## Run wordlist/lexicon to g2p model scripts
+
+All the above:
+
++ kanji/katakana/hirgama to romaji conversion
++ optional: romaji to katakana conversion
++ optional: katakana to ipa conversion with espeak
++ splitting into train and test sets
++ g2p modeling with Phonetisaurus
+
+are wrapped in two runfiles, which can be run as follows: 
 
     ## For lexica, e.g. 'wordlists/jpn_wiktionary.lex'
     cd source
@@ -102,17 +118,34 @@ From the acquired lexica
     cd source
     ./run_lexicon_to_model.sh <path/to/wordlist>
     
+The interim wordlists/lexica are created in the [wordlists](wordlists) directory,
+the fst models are in a directory whose name is identical to the lexicon name.
+    
 ## Number conversion
 
-The main idea behind arabic-to-written/romaji/kanji conversion is to represent numbers as factors of the powers of ten.  
-`12345`  
+The main idea behind arabic-to-written (romaji or kanji) conversion is to represent numbers as factors of the powers of ten.  
+`12045`  
 would become  
-`1*10^4 + 2*10^3 + 3*10^2 + 4*10^1 + 5*10^0`  
+`1*10^4 + 2*10^3 + 0*10^2 + 4*10^1 + 5*10^0`  
 which can be represented as a list of factors  
-`['1[E4]','2[E3]','3[E2]','4[E1]','5[E0]']`.  
+`['1[E4]','2[E3]','0[E2]','4[E1]','5[E0]']`.  
 This representation is easy to then to map to the written forms of numbers in a given language,
 but depending on the language, a few further modifications of the list are needed. 
-First
+First, the zero factors, e.g. `0[E2]`, have to be removed as they are not present in the written/spoken form.  
+Then the factors which have no distinctive written form (e.g. `[E5]`) have to be converted 
+In western number factorization `[E1], [E2], [E3], [E6], [E9]` have distinctive names `ten, hundred, thousand, million, billion`,
+and everything in between is an iteration from `[E1]` to `[E3]`.
+So basically adding three to the exponent or by every three digit group, there is new distinctive name.  
+In the Japanese number system `[E1], [E2], [E3], [E4], [E8], [E12]` have distinct names `ju, hyaku, sen, man, oku, cho`,
+and everything in between is an iteration from `` (four digit/kanji groups).
+
+After mapping the factors according to the Japanese factorization, the factors themselves are also split
+into the basic elements that make up the written form;
+e.g. `2[E3]` to `2` and `[E3]`.
+From then on, we just need a dictionary that maps the basic elements into their written romaji or kanji forms,
+so `[E3]` to `` and `` to ``.
+
+The [number converter](source/number_converter.py) supports both kanji-to-arabic and arabic-to-kanji/romaji conversions.
 
     cd source
     source activate <python3_env>
@@ -126,9 +159,33 @@ First
     Input number: 百二十三
     Arabic number: 123
 
-## Convert 'Words' or 'Numbers' token lists to pronunciations
+## Convert 'Words' or 'Numbers' objects to pronunciations
 
-The input format
+The following input format is supported:
+
+    Words\ttoken1 token2 token3
+    Numerals\ttoken4 token5 token6
+    
+An [exaple input file](input/input_tokens.txt) is in the repo.
+
+### Run object to pronunciations conversion
 
     cd source
     python token2pron.py <path/to/input>
+    
+The output is written in the [output directory](output), in the following format:
+
+    token_type\tinput_token\pron
+    Words\ttoken1\tp r o n 1
+    Words\ttoken2\tp r o n 2
+    Words\ttoken3\tp r o n 3
+    Numerals\ttoken1\tp r o n 1
+    Numerals\ttoken2\tp r o n 2
+    Numerals\ttoken3\tp r o n 3
+    
+## Caveats
+
++ need more data
++ merged phoneme inventory
++ `一〇〇`
++ only one pron as output
