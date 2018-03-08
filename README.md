@@ -112,7 +112,7 @@ Here I used [Phonetisaurus](https://github.com/AdolfVonKleist/Phonetisaurus), an
     ## <lexicon_dir_name>/<lexicon_dir_name>.oN.arpa, where N is the n-gram order
     ## <lexicon_dir_name>/<lexicon_dir_name>.oN.fst
     
-## Run wordlist/lexicon to g2p model scripts
+### Run wordlist/lexicon to g2p model scripts
 
 All the above:
 
@@ -134,6 +134,55 @@ are wrapped in two runfiles, which can be run as follows:
 The interim wordlists/lexica are created in the [wordlists](wordlists) directory,
 the fst models are in a directory whose name is identical to the lexicon name.
 They are also [shared here](https://drive.google.com/open?id=1HPOvT5NNR5pWzAG0e09P99jPaEbiAJvq).
+
+### Evaluation results
+
+Evaluation results (phone error rate (PER) and word accuracy) of the wiktionary model (`jpn_wiktionary_romaji_uniq.o7.fst`):
+
+> Words: 140  Hyps: 140 Refs: 140
+
+> (T)otal tokens in reference: 946
+
+> (M)atches: 703  (S)ubstitutions: 117  (I)nsertions: 32  (D)eletions: 126
+
+> % Correct (M/T)           -- %74.31
+
+> % Token ER ((S+I+D)/T)    -- %29.07
+
+> % Accuracy 1.0-ER         -- %70.93
+
+> -------------------------------------------------------- 
+
+> (S)equences: 140  (C)orrect sequences: 70  (E)rror sequences: 70
+
+> % Sequence ER (E/S)       -- %50.00
+
+> % Sequence Acc (1.0-E/S)  -- %50.00
+
+Evaluation results (PER and accuracy) of the wordlist model (`jpn_romaji_uniq_to_katakana_uniq_espeak.o7.fst`):
+
+> Words: 1935  Hyps: 1935 Refs: 1935
+
+> (T)otal tokens in reference: 12796
+
+> (M)atches: 12619  (S)ubstitutions: 176  (I)nsertions: 7  (D)eletions: 1
+
+> % Correct (M/T)           -- %98.62
+
+> % Token ER ((S+I+D)/T)    -- %1.44
+
+> % Accuracy 1.0-ER         -- %98.56
+
+> -------------------------------------------------------- 
+
+> (S)equences: 1935  (C)orrect sequences: 1782  (E)rror sequences: 153
+
+> % Sequence ER (E/S)       -- %7.91
+
+> % Sequence Acc (1.0-E/S)  -- %92.09
+
+As the two lexica/model uses different sets of phoneme inventories,
+they haven't been merged for now - this is a future step.
     
 ## Number conversion
 
