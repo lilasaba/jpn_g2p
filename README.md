@@ -251,7 +251,10 @@ The output is written in the [output directory](output), in the following format
 ## TODOs, warnings
 
 + Need more data
-+ Currently the two lexica/models use two different phoneme inventory sets, so cannot be merged. The phoneme inventories need to be unified. 
++ Define phoneme inventory
+    + Currently the two lexica/models use two different phoneme inventory sets, so cannot be merged. 
+    + The phoneme inventories need to be unified. 
++ Numbert supported only up to 10**12
 + Not sure if `一〇〇` is a valid number, is it `1` or `100`?
-+ Need to support multiple output pronunciations
++ Need to support alternatet pronunciations: both training and decodding
 + etc.
